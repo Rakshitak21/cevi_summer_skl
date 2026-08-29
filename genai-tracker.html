@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vision Summer School — GenAI & Advanced Models Assessment</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+    color: #1c1c1c;
+    background: #fafafa;
+    line-height: 1.5;
+  }
+
+  .header { margin-bottom: 28px; }
+  h1 { font-size: 1.65rem; color: #0f172a; margin: 0 0 6px; font-weight: 700; }
+  .subtitle { font-size: 0.95rem; color: #64748b; margin: 0; }
+  
+  .notice-box {
+    font-size: 0.85rem; color: #475569; margin-top: 14px;
+    padding: 10px 14px; background: #f1f5f9;
+    border-left: 3px solid #3b82f6; border-radius: 4px;
+  }
+
+  .section {
+    background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;
+    padding: 22px 24px; margin-bottom: 22px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  .section-title {
+    font-size: 1.05rem; font-weight: 700; color: #1e293b;
+    margin: 0 0 16px; display: flex; align-items: center; gap: 10px;
+  }
+  .section-number {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px; background: #2563eb; color: white;
+    border-radius: 50%; font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+  }
+
+  .question { margin-bottom: 20px; }
+  .question:last-child { margin-bottom: 4px; }
+  .q-label { display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 6px; color: #334155; }
+  .q-num { color: #2563eb; margin-right: 5px; font-weight: 700; }
+  .q-hint { font-size: 0.82rem; color: #64748b; margin-bottom: 6px; display: block; }
+
+  .importance {
+    display: inline-block; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.04em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 4px; margin-bottom: 6px;
+    background: #fef3c7; color: #92400e;
+  }
+  .importance-note {
+    font-size: 0.84rem; font-style: italic; color: #92400e;
+    background: #fffbeb; border-left: 3px solid #f59e0b;
+    padding: 8px 12px; border-radius: 4px; margin: 4px 0 10px;
+  }
+
+  input[type="text"], select, textarea {
+    width: 100%; padding: 10px 14px; font-size: 0.95rem;
+    border: 1px solid #cbd5e1; border-radius: 6px;
+    font-family: inherit; background: #fcfcfd; color: #0f172a;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  textarea { min-height: 90px; resize: vertical; }
+  input[type="text"]:focus, select:focus, textarea:focus {
+    outline: none; border-color: #2563eb; background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+
+  .identity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 580px) {
+    .identity-grid { grid-template-columns: 1fr; }
+  }
+
+  .warning {
+    display: none; color: #dc2626; font-size: 0.82rem;
+    margin-top: 6px; font-weight: 500;
+  }
+
+  button {
+    background: #2563eb; color: white; border: none; padding: 14px 28px;
+    border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%;
+    transition: background 0.2s, transform 0.1s;
+  }
+  button:hover { background: #1d4ed8; }
+  button:active { transform: translateY(1px); }
+  button:disabled { background: #94a3b8; cursor: not-allowed; }
+
+  .status {
+    font-size: 0.95rem; margin-top: 14px; text-align: center;
+    font-weight: 600; min-height: 24px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Vision Summer School — GenAI Check-in</h1>
+  <p class="subtitle">Select your module, answer in your own words, and submit your progress directly to Google Sheets.</p>
+  <div class="notice-box">
+    ⚠️ <strong>Anti-paste enabled:</strong> Pasting is blocked on all answer fields. Type your response directly.
+  </div>
+</div>
+
+<form id="checkinForm">
+
+  <!-- Section 0: Student Identity & Chapter Selection -->
+  <div class="section">
+    <div class="section-title"><span class="section-number">·</span>Your Details & Module</div>
+    
+    <div class="identity-grid" style="margin-bottom: 16px;">
+      <div class="question">
+        <label class="q-label" for="name">Full Name *</label>
+        <input type="text" id="name" name="name" placeholder="e.g. Yashas B" required>
+      </div>
+      <div class="question">
+        <label class="q-label" for="usn">USN / Student ID *</label>
+        <input type="text" id="usn" name="usn" placeholder="e.g. 1BV21CS001" required>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label" for="chapterSelect">Select Topic / Module *</label>
+      <select id="chapterSelect" name="chapter" required onchange="loadChapterQuestions()">
+        <option value="1">1. Autoencoders & Variational Autoencoders (VAE)</option>
+        <option value="2">2. Attention Mechanism & Transformers</option>
+        <option value="3">3. Evolution of LLMs & Vision-Language/Multimodal LLMs</option>
+        <option value="4">4. Generative Adversarial Networks</option>
+        <option value="5">5. Diffusion Models</option>
+        <option value="6">6. Image & Video Generation using GenAI</option>
+        <option value="7">7. Autoencoder Lab — VAE</option>
+        <option value="8">8. Attention/Transformer Lab</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Section 1: Dynamic Questions Container -->
+  <div class="section" id="questionsSection">
+    <div class="section-title" id="moduleTitle">
+      <span class="section-number">1</span>
+      <span id="moduleNameText">Module Questions</span>
+    </div>
+
+    <!-- Q1 (Single Line) -->
+    <div class="question">
+      <label class="q-label"><span class="q-num">Q1.</span><span id="q1_text"></span></label>
+      <span class="q-hint">One-line answer expected</span>
+      <input type="text" id="q1" name="q1" placeholder="Type your answer here..." required>
+      <div class="warning" id="warn1">Pasting is disabled on this form. Please type your answer directly.</div>
+    </div>
+
+    <!-- Q2 (Single Line) -->
+    <div class="question">
+      <label class="q-label"><span class="q-num">Q2.</span><span id="q2_text"></span></label>
+      <span class="q-hint">One-line answer expected</span>
+      <input type="text" id="q2" name="q2" placeholder="Type your answer here..." required>
+      <div class="warning" id="warn2">Pasting is disabled on this form. Please type your answer directly.</div>
+    </div>
+
+    <!-- Q3 (Brief Answer) -->
+    <div class="question">
+      <div class="importance" id="q3_tag">Worth knowing well</div>
+      <div class="importance-note" id="q3_note">Explain clearly in 2–3 sentences based on your understanding.</div>
+      <label class="q-label"><span class="q-num">Q3.</span><span id="q3_text"></span></label>
+      <textarea id="q3" name="q3" placeholder="Explain in 2-3 brief sentences..." required></textarea>
+      <div class="warning" id="warn3">Pasting is disabled on this form. Please type your answer directly.</div>
+    </div>
+  </div>
+
+  <button type="submit" id="submitBtn">Submit Check-in</button>
+  <div class="status" id="statusMsg"></div>
+</form>
+
+<script>
+  const CHAPTER_DATA = {
+    "1": {
+      title: "Autoencoders & Variational Autoencoders (VAE)",
+      q1: "What mathematical trick allows gradients to backpropagate through the stochastic latent sampling step in a Variational Autoencoder?",
+      q2: "What are the two distinct loss terms that make up the total loss function of a VAE?",
+      q3: "What is the fundamental difference between a standard Autoencoder and a VAE in how their latent spaces are organized, and why can standard Autoencoders not generate smooth new samples?",
+      tag: "Important - read carefully",
+      note: "Continuous and smooth latent distributions are essential for generating realistic interpolations and novel samples."
+    },
+    "2": {
+      title: "Attention Mechanism & Transformers",
+      q1: "What are the three core vectors generated by projecting input token embeddings in Scaled Dot-Product Attention?",
+      q2: "Why is the dot product of Query and Key divided by sqrt(d_k) in scaled dot-product attention?",
+      q3: "Why do Transformers require Positional Encodings, whereas Recurrent Neural Networks (RNNs) and CNNs inherently preserve token sequence order?",
+      tag: "Worth knowing well",
+      note: "Transformers process all tokens in parallel without inherent order; positional embeddings inject vital sequential context."
+    },
+    "3": {
+      title: "Evolution of LLMs & Vision-Language/Multimodal LLMs",
+      q1: "What alignment technique uses human preference comparisons to train a reward model to steer LLM outputs?",
+      q2: "In Vision-Language Models (e.g., CLIP, LLaVA), what component bridges the visual feature space with the text embedding space?",
+      q3: "What is the difference between Pre-training, Supervised Fine-Tuning (SFT), and In-Context Learning (Prompting) in modern LLM development?",
+      tag: "Important - read carefully",
+      note: "Distinguishing base model knowledge acquisition from instruction-following and prompt adaptation is fundamental to modern GenAI."
+    },
+    "4": {
+      title: "Generative Adversarial Networks",
+      q1: "What are the two competing neural networks that constitute a Generative Adversarial Network?",
+      q2: "What failure mode occurs when a Generator produces only a single repetitive output image to fool the Discriminator?",
+      q3: "Explain the minimax game objective between the Generator and Discriminator in a GAN. Why does the generator improve as the discriminator gets stronger?",
+      tag: "Worth knowing well",
+      note: "GAN training relies on a dynamic adversarial equilibrium; stabilizing this minimax game is key to avoiding artifacts and mode collapse."
+    },
+    "5": {
+      title: "Diffusion Models",
+      q1: "What process gradually destroys data structure by adding Gaussian noise over multiple timesteps in a diffusion model?",
+      q2: "What does the neural network (typically a U-Net) in a Denoising Diffusion Probabilistic Model (DDPM) directly predict at each timestep?",
+      q3: "How does Latent Diffusion (e.g., Stable Diffusion) drastically reduce compute and memory compared to pixel-space diffusion while maintaining high image fidelity?",
+      tag: "Important - read carefully",
+      note: "Operating diffusion in a compressed latent space enables fast, high-resolution generation on consumer-grade hardware."
+    },
+    "6": {
+      title: "Image & Video Generation using GenAI",
+      q1: "What parameter in diffusion models controls how strictly the generated output adheres to the input text prompt versus model creativity?",
+      q2: "What neural module allows diffusion models (e.g., ControlNet, IP-Adapter) to condition generation on depth maps, edge lines, or poses?",
+      q3: "What major challenge makes Video Generation significantly more complex than single Image Generation, and how do models maintain temporal consistency across frames?",
+      tag: "Worth knowing well",
+      note: "Maintaining temporal coherence across 3D spacetime attention without flickering or spatial drift is the frontier of video synthesis."
+    },
+    "7": {
+      title: "Autoencoder Lab — VAE",
+      q1: "In PyTorch, write the single-line formula used to calculate the latent vector z from mu, logvar, and random noise eps.",
+      q2: "What reconstruction loss function is standardly used when input image pixel values are normalized between 0 and 1?",
+      q3: "In your VAE lab experiment, what happens visually when you linearly interpolate between two coordinates in latent space compared to a standard Autoencoder?",
+      tag: "Important - read carefully",
+      note: "The reparameterization trick enables standard backpropagation through stochastic sampling nodes in PyTorch."
+    },
+    "8": {
+      title: "Attention/Transformer Lab",
+      q1: "What is the tensor shape of the attention score matrix resulting from multiplying Query (B, H, S, d_k) by transposed Key (B, H, d_k, S)?",
+      q2: "What tensor mask is applied during autoregressive self-attention to prevent a token from attending to future tokens?",
+      q3: "Explain why Multi-Head Attention is advantageous over Single-Head Attention. Why is it beneficial to project Q, K, and V into multiple subspaces?",
+      tag: "Worth knowing well",
+      note: "Multiple attention heads allow the model to simultaneously attend to information from different representation subspaces at different positions."
+    }
+  };
+
+  function loadChapterQuestions() {
+    const chapter = document.getElementById('chapterSelect').value;
+    const data = CHAPTER_DATA[chapter];
+    if (!data) return;
+
+    document.getElementById('moduleNameText').textContent = data.title;
+    document.getElementById('q1_text').textContent = data.q1;
+    document.getElementById('q2_text').textContent = data.q2;
+    document.getElementById('q3_text').textContent = data.q3;
+    document.getElementById('q3_tag').textContent = data.tag;
+    document.getElementById('q3_note').textContent = data.note;
+
+    // Reset current question inputs
+    document.getElementById('q1').value = '';
+    document.getElementById('q2').value = '';
+    document.getElementById('q3').value = '';
+  }
+
+  // Initialize with chapter 1
+  loadChapterQuestions();
+
+  // Block paste, drag-drop text, and right-click context menu on all inputs
+  const inputFields = document.querySelectorAll('textarea, input[type="text"]');
+  inputFields.forEach(field => {
+    field.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const warnId = 'warn' + (field.id.replace('q', ''));
+      const warningEl = document.getElementById(warnId);
+      if (warningEl) {
+        warningEl.style.display = 'block';
+        setTimeout(() => warningEl.style.display = 'none', 3000);
+      }
+    });
+    field.addEventListener('drop', (e) => e.preventDefault());
+    field.addEventListener('contextmenu', (e) => e.preventDefault());
+  });
+
+  // Deployed Google Apps Script Web App URL:
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJhp9yJv8rKYhsBZZCZV1UXKSwfyIS2CoxYUt1GNFGm-66fjwgg9lNNScWjn6LSZmk/exec";
+
+  document.getElementById('checkinForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMsg = document.getElementById('statusMsg');
+    
+    if (SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT_URL_HERE")) {
+      statusMsg.style.color = '#b3261e';
+      statusMsg.textContent = '⚠️ Setup required: Please replace SCRIPT_URL with your deployed Google Apps Script URL.';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting your responses...';
+    statusMsg.style.color = '#64748b';
+    statusMsg.textContent = '';
+
+    const chapterKey = document.getElementById('chapterSelect').value;
+    const payload = {
+      name: document.getElementById('name').value.trim(),
+      usn: document.getElementById('usn').value.trim().toUpperCase(),
+      chapter_id: chapterKey,
+      chapter_title: CHAPTER_DATA[chapterKey].title,
+      q1: document.getElementById('q1').value.trim(),
+      q2: document.getElementById('q2').value.trim(),
+      q3: document.getElementById('q3').value.trim(),
+      timestamp: new Date().toLocaleString()
+    };
+
+    try {
+      const response = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: { 'Content-Type': 'text/plain' } // avoids CORS preflight issues with Google Apps Script
+      });
+
+      const result = await response.json();
+
+      if (result.status === 'success') {
+        statusMsg.style.color = '#166534';
+        statusMsg.textContent = '✅ Submitted successfully! Your responses have been recorded in the Google Sheet.';
+        document.getElementById('q1').value = '';
+        document.getElementById('q2').value = '';
+        document.getElementById('q3').value = '';
+      } else {
+        throw new Error(result.message || 'Unknown error from server');
+      }
+    } catch (err) {
+      statusMsg.style.color = '#b3261e';
+      statusMsg.textContent = '❌ Submission failed: ' + err.message + '. Please try again — your answers are still in the form.';
+      console.error(err);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Submit Check-in';
+    }
+  });
+</script>
+
+</body>
+</html>
